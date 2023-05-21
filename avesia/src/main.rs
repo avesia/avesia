@@ -16,13 +16,13 @@ fn main() -> wry::Result<()> {
 
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
-        .with_title("Custom Protocol")
+        .with_title("avesia")
         .build(&event_loop)
         .unwrap();
 
     let _webview = WebViewBuilder::new(window)
         .unwrap()
-        .with_custom_protocol("wry".into(), move |request| {
+        .with_custom_protocol("avs".into(), move |request| {
             let path = request.uri().path();
 
             // `1..` for removing leading slash
@@ -38,6 +38,8 @@ fn main() -> wry::Result<()> {
                 "text/javascript"
             } else if path.ends_with(".png") {
                 "image/png"
+            } else if path.ends_with(".css") {
+                "text/css"
             } else if path.ends_with(".wasm") {
                 "application/wasm"
             } else {
@@ -50,7 +52,7 @@ fn main() -> wry::Result<()> {
                 .map_err(Into::into)
         })
         // tell the webview to load the custom protocol
-        .with_url("wry://localhost/index.html")?
+        .with_url("avs://localhost/index.html")?
         .build()?;
 
     event_loop.run(move |event, _, control_flow| {
