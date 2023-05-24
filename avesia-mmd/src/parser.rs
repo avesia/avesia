@@ -89,17 +89,13 @@ pub struct PMXMaterial {
     pub name_english: String,
 }
 
-pub struct PMXMaterial {
-    
-}
-
 pub struct PMXData {
     pub header: PMXHeader,
     pub model_info: PMXModelInfo,
     pub vertices: Vec<PMXVertex>,
     pub surfaces: Vec<PMXSurface>,
     pub textures: Vec<PMXTexture>,
-    pub materials: 
+    pub materials: Vec<PMXMaterial>,
 } 
 
 pub struct PMXParserOptions {
