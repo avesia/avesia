@@ -17,6 +17,10 @@
 
 * {
     user-select: none;
+
+    /*for webview 2 on edge*/
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
 }
 
 body {
