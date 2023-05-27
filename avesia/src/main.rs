@@ -38,6 +38,8 @@ fn main() -> wry::Result<()> {
                 "text/javascript"
             } else if path.ends_with(".png") {
                 "image/png"
+            } else if path.ends_with(".svg") {
+                "image/svg+xml"
             } else if path.ends_with(".css") {
                 "text/css"
             } else if path.ends_with(".wasm") {
