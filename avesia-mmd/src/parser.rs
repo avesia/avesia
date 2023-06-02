@@ -1,21 +1,70 @@
-use std::io::Cursor;
+use std::convert::TryFrom;
 use glam::{Vec2, Vec3, Vec4};
+use nom::{
+    bytes::complete::tag,
+    sequence::tuple,
+    combinator::map,
+    IResult, number::complete::{be_f32, be_u8}
+};
 
 pub enum Encode {
-    UTF16,
-    UTF8
+    UTF16 = 0,
+    UTF8 = 1
 }
 
+// Covert u8 to enum
+impl TryFrom<u8> for Encode {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match (value) {
+            v if v == Self::UTF16 as u8 => Ok(Self::UTF16),
+            v if v == Self::UTF8 as u8 => Ok(Self::UTF8),
+            _ => Err(()),
+        }
+    }
+}
+
+#[repr(u8)]
 pub enum IndexUnsigned {
-    U8(u8),
-    U16(u16),
-    I32(i32),
+    U8(u8) = 1,
+    U16(u16) = 2,
+    I32(i32) = 4,
 }
 
+// Covert u8 to enum
+impl TryFrom<u8> for IndexUnsigned {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match (value) {
+            v if v == Self::U8 as u8 => Ok(Self::U8(0)),
+            v if v == Self::U16 as u8 => Ok(Self::U16(0)),
+            v if v == Self::I32 as u8 => Ok(Self::I32(0)),
+            _ => Err(()),
+        }
+    }
+}
+
+#[repr(u8)]
 pub enum Index {
-    I8(i8),
-    I16(i16),
-    I32(i32),
+    I8(i8) = 1,
+    I16(i16) = 2,
+    I32(i32) = 4,
+}
+
+// Covert u8 to enum
+impl TryFrom<u8> for Index {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match (value) {
+            v if v == Self::I8 as u8 => Ok(Self::I8(0)),
+            v if v == Self::I16 as u8 => Ok(Self::I16(0)),
+            v if v == Self::I32 as u8 => Ok(Self::I32(0)),
+            _ => Err(()),
+        }
+    }
 }
 
 pub struct PMXHeader {
@@ -102,15 +151,15 @@ pub struct PMXParserOptions {
     
 }
 
-pub struct PMXParser {
-    pub cursor: Cursor<u8>,
+pub struct PMXParser<'a> {
+    pub bytes: &'a [u8],
     pub options: Option<PMXParserOptions>,
 }
 
-impl PMXParser {
-    pub fn from_cursor(cur: Cursor<u8>) -> Self {
+impl PMXParser<'_> {
+    pub fn from_bytes(buf: &[u8]) -> Self {
         Self {
-            cursor: cur,
+            bytes: buf,
             options: None,
         }
     }
@@ -122,6 +171,51 @@ impl PMXParser {
     }
 
     pub fn parse(self: &mut Self) -> PMXData {
-        todo!()
+        let header = parse_header(self.bytes).unwrap();
+
+        PMXData { header: header.1, }
     }
+}
+
+pub fn parse_header<'a>(buf: &[u8]) -> IResult<&'a[u8], PMXHeader> {
+    map(
+        tuple((
+            tag("PMX "),
+            be_f32, // version
+            be_u8,
+            be_u8, // encoding
+            be_u8, // additional uv size
+            be_u8, // vertex index size
+            be_u8, // texture index size
+            be_u8, // material index size
+            be_u8, // bone index size
+            be_u8, // morph index size
+            be_u8, // rigid body index size
+        )),
+        |(
+            _,
+            version,
+            _,
+            encoding,
+            additional_uv_size,
+            vertex_index_size,
+            texture_index_size,
+            material_index_size,
+            bone_index_size,
+            morph_index_size,
+            rigid_body_index_size
+        )| {
+            PMXHeader {
+                version:                version, 
+                encoding:               encoding.try_into().unwrap(),
+                additional_uv_size:     additional_uv_size,
+                vertex_index_size:      vertex_index_size.try_into().unwrap(),
+                texture_index_size:     texture_index_size.try_into().unwrap(),
+                material_index_size:    material_index_size.try_into().unwrap(),
+                bone_index_size:        bone_index_size.try_into().unwrap(),
+                morph_index_size:       morph_index_size.try_into().unwrap(),
+                rigid_body_index_size:  rigid_body_index_size.try_into().unwrap(),
+            }
+        }
+    )(buf)
 }
