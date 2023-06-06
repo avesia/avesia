@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
 export interface Window {
-    windowId: String,
-    title: String,
-    dockedAreaId: String,
+    windowId: string,
+    title: string,
+    dockedAreaId: string,
     element: React.ReactNode,
 }
 
 export interface DockingArea {
-    areaId: String,
+    areaId: string,
 }
 
 interface WindowManagerProps {
