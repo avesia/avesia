@@ -15,7 +15,6 @@
     --ui-col-background-active-primary: #3a3a79;
     --ui-col-text-primary: #ffffff;
     --ui-col-border-primary: #4747e7;
-    --ui-col-shadow-primary: #a2a2a2;
 }
 
 * {
@@ -89,7 +88,7 @@ body {
 .button.primary {
     background-color: var(--ui-col-background-primary);
     border: 1.5px solid var(--ui-col-border-primary);
-    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow-primary);
+    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow);
 
     color: var(--ui-col-text-primary);
 }
@@ -108,6 +107,7 @@ body {
     border-radius: 5px;
 
     border: 1.5px solid var(--ui-col-border);
+    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow);
 
     overflow: hidden;
 }
@@ -142,6 +142,8 @@ body {
     height: 3px;
 
     background-color: var(--ui-col-theme-disabled);
+
+    z-index: 8;
 }
 
 @keyframes headerbar-border-animation {
@@ -164,7 +166,7 @@ body {
 
 .headerbar .headerbar_menu {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
     width: 100%;
     height: 100%;
@@ -213,6 +215,10 @@ body {
     top: 0;
     right: 0;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     padding: 10px;
 
     z-index: 10;

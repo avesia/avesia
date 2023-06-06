@@ -1,4 +1,4 @@
-import { Canvas, Code, Sequence, Stage } from "../icons/icons";
+import { Canvas, Code, Motion, Sequence, Stage } from "../icons/icons";
 
 export default function HeaderBar() {
     return (
@@ -11,6 +11,12 @@ export default function HeaderBar() {
                             <Canvas />
                         </div>
                         <p className="headerbar_menu_item_label">Canvas</p>
+                    </button>
+                    <button className="headerbar_menu_item">
+                        <div className="headerbar_menu_item_icon wrap-blockicon">
+                            <Motion />
+                        </div>
+                        <p className="headerbar_menu_item_label">Motion</p>
                     </button>
                     <button className="headerbar_menu_item">
                         <div className="headerbar_menu_item_icon wrap-blockicon">
