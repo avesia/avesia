@@ -1,4 +1,4 @@
-fn main() -> wry::Result<()> {
+pub fn start() -> wry::Result<()> {
     use std::{
         fs::{canonicalize, read},
         path::PathBuf,

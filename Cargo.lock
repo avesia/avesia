@@ -56,6 +56,10 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 [[package]]
 name = "avesia"
 version = "0.1.0"
+dependencies = [
+ "avesia-desktop",
+ "avesia-server",
+]
 
 [[package]]
 name = "avesia-desktop"
@@ -75,6 +79,10 @@ dependencies = [
 
 [[package]]
 name = "avesia-render"
+version = "0.1.0"
+
+[[package]]
+name = "avesia-server"
 version = "0.1.0"
 
 [[package]]

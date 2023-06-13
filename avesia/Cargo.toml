@@ -6,3 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+avesia-desktop = { path = "../avesia-desktop", optional = true }
+avesia-server = { path = "../avesia-server", optional = true }
+
+[features]
+default = ["desktop"]
+desktop = ["dep:avesia-desktop"]
+server = ["dep:avesia-server"]
