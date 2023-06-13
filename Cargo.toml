@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "avesia",
+    "avesia-desktop",
     "avesia-mmd",
     "avesia-render",
 ]
