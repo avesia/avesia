@@ -1,0 +1,41 @@
+version: '3'
+
+dotenv: ['.env']
+
+includes: 
+  web:
+    taskfile: ./avesia-web/Taskfile.yml
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    cmds:
+      - task: build-web
+      - task: build-renderer
+      - task: build-app
+
+  dev:
+    deps: [build-web-dev, build-renderer, run-app-dev]
+
+  build-web:
+    cmds:
+      - task: web:build-web
+  
+  build-renderer:
+    cmds:
+      - cargo build --bin avesia-render
+
+  build-app:
+    cmds:
+      - cargo build --bin avesia
+
+  build-web-dev:
+    cmds:
+      - task: web:build-web-dev
+
+  run-app-dev:
+    cmds:
+      - cargo run --bin avesia -- desktop http://localhost:8513
