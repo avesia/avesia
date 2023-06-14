@@ -6,10 +6,8 @@ members = [
     "avesia-server",
     "avesia-mmd"
 ]
-
 default-members = [
     "avesia",
-    "avesia-desktop",
-    "avesia-render",
-    "avesia-server",
+    "avesia-render"
 ]
+resolver = "2"
