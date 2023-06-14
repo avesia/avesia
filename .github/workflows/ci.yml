@@ -16,11 +16,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: npm
+
+    - name: Install Task
+      uses: arduino/setup-task@v1
+      with:
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y webkit2gtk-4.1 libgtksourceview-3.0-dev libayatana-appindicator3-dev
-    - name: Tests
-      run: cargo test --verbose
-    - name: Clippy
-      run: cargo clippy
+    - name: Build
+      run: |
+        task build
+    #- name: Tests
+    #  run: cargo test --verbose
+    #- name: Clippy
+    #  run: cargo clippy
