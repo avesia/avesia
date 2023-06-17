@@ -1,10 +1,12 @@
 use std::convert::TryFrom;
 use glam::{Vec2, Vec3, Vec4};
 use nom::{
-    bytes::complete::tag,
+    bytes::complete::{tag, take_until},
     sequence::tuple,
-    combinator::map,
-    IResult, number::complete::{be_f32, be_u8}
+    combinator::{map, map_res},
+    IResult,
+    number::complete::{be_f32, be_u8},
+    error::{ParseError, FromExternalError}, multi::{fold_many_m_n, fold_many0}
 };
 
 pub enum Encode {
@@ -12,12 +14,12 @@ pub enum Encode {
     UTF8 = 1
 }
 
-// Covert u8 to enum
+/// Covert u8 to enum
 impl TryFrom<u8> for Encode {
     type Error = ();
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match (value) {
+        match value {
             v if v == Self::UTF16 as u8 => Ok(Self::UTF16),
             v if v == Self::UTF8 as u8 => Ok(Self::UTF8),
             _ => Err(()),
@@ -32,12 +34,12 @@ pub enum IndexUnsigned {
     I32(i32) = 4,
 }
 
-// Covert u8 to enum
+/// Covert u8 to enum
 impl TryFrom<u8> for IndexUnsigned {
     type Error = ();
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match (value) {
+        match value {
             v if v == Self::U8 as u8 => Ok(Self::U8(0)),
             v if v == Self::U16 as u8 => Ok(Self::U16(0)),
             v if v == Self::I32 as u8 => Ok(Self::I32(0)),
@@ -53,12 +55,12 @@ pub enum Index {
     I32(i32) = 4,
 }
 
-// Covert u8 to enum
+/// Covert u8 to enum
 impl TryFrom<u8> for Index {
     type Error = ();
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match (value) {
+        match value {
             v if v == Self::I8 as u8 => Ok(Self::I8(0)),
             v if v == Self::I16 as u8 => Ok(Self::I16(0)),
             v if v == Self::I32 as u8 => Ok(Self::I32(0)),
@@ -170,27 +172,49 @@ impl PMXParser<'_> {
         self
     }
 
-    pub fn parse(self: &mut Self) -> PMXData {
-        let header = parse_header(self.bytes).unwrap();
-
-        PMXData { header: header.1, }
+    pub fn parse(self: &mut Self) -> Result<PMXData, ()> {
+        match parse_all::<()>(self.bytes) {
+            Ok(res) => return Ok(res.1),
+            Err(e) => return Err(()),
+        }
     }
 }
 
-pub fn parse_header<'a>(buf: &[u8]) -> IResult<&'a[u8], PMXHeader> {
+fn parse_all<'a, E>(buf: &[u8]) -> IResult<&'a[u8], PMXData, E>
+where
+    E: ParseError<&'a [u8]> + FromExternalError<&'a [u8], ()>
+{
+    map(
+        tuple((
+            parse_header,
+            parse_model_info
+        )),
+        |(header, model_info)| {
+            PMXData { 
+                header,
+                model_info,
+            }
+        }
+    )(buf)
+}
+
+fn parse_header<'a, E>(buf: &[u8]) -> IResult<&'a [u8], PMXHeader, E>
+where
+    E: ParseError<&'a [u8]> + FromExternalError<&'a [u8], ()>
+{
     map(
         tuple((
             tag("PMX "),
             be_f32, // version
             be_u8,
-            be_u8, // encoding
+            be_encoding, // encoding
             be_u8, // additional uv size
-            be_u8, // vertex index size
-            be_u8, // texture index size
-            be_u8, // material index size
-            be_u8, // bone index size
-            be_u8, // morph index size
-            be_u8, // rigid body index size
+            be_index_size_unsigned, // vertex index size
+            be_index_size_signed, // texture index size
+            be_index_size_signed, // material index size
+            be_index_size_signed, // bone index size
+            be_index_size_signed, // morph index size
+            be_index_size_signed, // rigid body index size
         )),
         |(
             _,
@@ -206,16 +230,86 @@ pub fn parse_header<'a>(buf: &[u8]) -> IResult<&'a[u8], PMXHeader> {
             rigid_body_index_size
         )| {
             PMXHeader {
-                version:                version, 
-                encoding:               encoding.try_into().unwrap(),
-                additional_uv_size:     additional_uv_size,
-                vertex_index_size:      vertex_index_size.try_into().unwrap(),
-                texture_index_size:     texture_index_size.try_into().unwrap(),
-                material_index_size:    material_index_size.try_into().unwrap(),
-                bone_index_size:        bone_index_size.try_into().unwrap(),
-                morph_index_size:       morph_index_size.try_into().unwrap(),
-                rigid_body_index_size:  rigid_body_index_size.try_into().unwrap(),
+                version, 
+                encoding,
+                additional_uv_size,
+                vertex_index_size,
+                texture_index_size,
+                material_index_size,
+                bone_index_size,
+                morph_index_size,
+                rigid_body_index_size,
             }
         }
     )(buf)
 }
+
+fn be_encoding<'a, E>(input: &[u8]) -> IResult<&'a [u8], Encode, E>
+where
+    E: ParseError<&'a [u8]>
+{
+    map(be_u8, |v| match v {
+        0 => Encode::UTF16,
+        1 => Encode::UTF8
+    })(input)
+}
+
+fn be_index_size_unsigned<'a, E>(input: &[u8]) -> IResult<&'a [u8], IndexUnsigned, E>
+where
+    E: ParseError<&'a [u8]> + FromExternalError<&'a [u8], ()>
+{
+    map_res(be_u8, |v| match v {
+        1 => Ok(IndexUnsigned::U8(0)),
+        2 => Ok(IndexUnsigned::U16(0)),
+        4 => Ok(IndexUnsigned::I32(0)),
+        _ => Err(())
+    })(input)
+}
+
+fn be_index_size_signed<'a, E>(input: &[u8]) -> IResult<&'a [u8], Index, E>
+where
+    E: ParseError<&'a [u8]> + FromExternalError<&'a [u8], ()>
+{
+    map_res(be_u8, |v| match v {
+        1 => Ok(Index::I8(0)),
+        2 => Ok(Index::I16(0)),
+        4 => Ok(Index::I32(0)),
+        _ => Err(()),
+    })(input)
+}
+
+fn parse_model_info<'a, E>(input: &[u8]) -> IResult<&'a [u8], PMXModelInfo, E>
+where
+    E: ParseError<&'a [u8]>
+{
+    map (
+        tuple((
+            be_string,
+            be_string,
+            be_string,
+            be_string
+        )),
+        |(
+            model_name,
+            model_name_english,
+            model_comments,
+            model_comments_english
+        )| {
+            PMXModelInfo {
+                model_name,
+                model_name_english,
+                model_comments,
+                model_comments_english
+            }
+        }
+    )(input)
+}
+
+fn be_string<'a, E>(input: &[u8]) -> IResult<&'a [u8], String, E>
+where
+    E: ParseError<&'a [u8]>
+{
+    fold_many0(, init, g)
+}
+
+fn parse_literals<'a, E>(input)
