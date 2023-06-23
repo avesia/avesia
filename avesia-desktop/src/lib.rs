@@ -51,6 +51,7 @@ impl AvesiaDesktop {
             .with_custom_protocol("avs".into(), server::server)
             // tell the webview to load the custom protocol
             .with_url(self.options.url.as_str())?
+            .with_devtools(true)
             .build()?;
     
         event_loop.run(move |event, _, control_flow| {

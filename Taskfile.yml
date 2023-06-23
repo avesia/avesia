@@ -1,6 +1,8 @@
 version: '3'
 
-dotenv: ['.env']
+vars:
+  # release | debug
+  PROFILE: release
 
 includes: 
   web:
@@ -13,22 +15,40 @@ tasks:
 
   build:
     cmds:
+      - task: build-renderer-wasm
       - task: build-web
-      - task: build-renderer
       - task: build-app
 
   dev:
-    deps: [build-web-dev, build-renderer, run-app-dev]
+    deps: [build-web-dev, build-renderer-wasm, run-app-dev]
 
   build-web:
     cmds:
       - task: web:build-web
   
-  build-renderer:
+  build-renderer-wasm:
     cmds:
-      - cargo build --bin avesia-render
+      - task: build-renderer-{{.PROFILE}}
+
+  build-renderer-release:
+    cmds:
+      - cargo build -p avesia-render --target=wasm32-unknown-unknown --release
+      - wasm-pack build ./avesia-render --release --out-dir ../avesia-render-wasm
+  
+  build-renderer-debug:
+    cmds:
+      - cargo build -p avesia-render --target=wasm32-unknown-unknown
+      - wasm-pack build ./avesia-render --dev --out-dir ../avesia-render-wasm
 
   build-app:
+    cmds:
+      - task: build-app-{{.PROFILE}}
+
+  build-app-release:
+    cmds:
+      - cargo build --bin avesia --release
+  
+  build-app-debug:
     cmds:
       - cargo build --bin avesia
 

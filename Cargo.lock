@@ -286,7 +286,6 @@ dependencies = [
 name = "avesia-mmd"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "glam 0.24.0",
  "nom",
 ]
@@ -296,6 +295,7 @@ name = "avesia-render"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "wasm-bindgen",
 ]
 
 [[package]]

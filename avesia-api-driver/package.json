@@ -1,0 +1,11 @@
+{
+    "name": "avesia-web-driver",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "typescript": "^5.1.3"
+    }
+}
