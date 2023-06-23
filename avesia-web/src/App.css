@@ -2,19 +2,23 @@
     --base-col-background: #eaeaea;
     --base-col-color: #313131;
     --base-font-family: system-ui;
-    --base-font-size: 16px;
+    --base-font-size: 14px;
 
     --ui-col-background: #f6f6f6;
     --ui-col-background-active: #ffffff;
     --ui-col-text: #313131;
     --ui-col-border: #bfbfbf;
-    --ui-col-shadow: #cccccc;
+    --ui-col-shadow: #b9b9b9;
     --ui-col-theme: #4064c8;
     --ui-col-theme-disabled: #a5a5a5;
     --ui-col-background-primary: #27275c;
     --ui-col-background-active-primary: #3a3a79;
     --ui-col-text-primary: #ffffff;
     --ui-col-border-primary: #4747e7;
+    --ui-col-background-danger: #731313;
+    --ui-col-background-active-danger: #a20e0e;
+    --ui-col-text-danger: #ffffff;
+    --ui-col-border-danger: #800000;
 }
 
 * {
@@ -61,7 +65,7 @@ body {
 
     background-color: var(--ui-col-background);
     border: 1.5px solid var(--ui-col-border);
-    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow);
+    box-shadow: 0px 3px 10px 0px var(--ui-col-shadow);
 
     color: var(--ui-col-text);
 
@@ -88,7 +92,7 @@ body {
 .button.primary {
     background-color: var(--ui-col-background-primary);
     border: 1.5px solid var(--ui-col-border-primary);
-    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow);
+    box-shadow: 0px 3px 10px 0px var(--ui-col-shadow);
 
     color: var(--ui-col-text-primary);
 }
@@ -96,6 +100,19 @@ body {
 .button.primary:active {
     background-color: var(--ui-col-background-active-primary);
     border: 1.5px solid var(--ui-col-theme);
+    box-shadow: none;
+}
+
+.button.danger {
+    background-color: var(--ui-col-background-danger);
+    border: 1.5px solid var(--ui-col-border-danger);
+    box-shadow: 0px 3px 10px 0px var(--ui-col-shadow);
+
+    color: var(--ui-col-text-danger);
+}
+
+.button.danger:active {
+    background-color: var(--ui-col-background-active-danger);
     box-shadow: none;
 }
 
@@ -107,7 +124,7 @@ body {
     border-radius: 5px;
 
     border: 1.5px solid var(--ui-col-border);
-    box-shadow: 1px 0px 10px 0px var(--ui-col-shadow);
+    box-shadow: 0px 3px 10px 0px var(--ui-col-shadow);
 
     overflow: hidden;
 }
@@ -192,8 +209,11 @@ body {
     font-size: 24px;
 }
 
-.headerbar .headerbar_menu .headerbar_menu_item .headerbar_menu_item_text {
+.headerbar .headerbar_menu .headerbar_menu_item .headerbar_menu_item_label {
     font-size: var(--base-font-size);
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .headerbar .headerbar_menu .headerbar_menu_item.active::after {
@@ -206,6 +226,8 @@ body {
     height: 3px;
 
     background-color: var(--ui-col-theme);
+
+    box-shadow: 0px 3px 5px 0px var(--ui-col-shadow);
 
     z-index: 1;
 }

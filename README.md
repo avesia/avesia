@@ -1,8 +1,8 @@
-# WIP:avesia - Infinite creation from a pencil.
+# WIP:avesia - An anime creator
 
 `avesia` is a software for industry-level anime creation.
 
-Visit [avesia.org](https://avesia.org/) for details.
+Visit [avesia.org](https://avesia.org) for details.
 
 ## Warnings
 
@@ -15,13 +15,13 @@ Visit [avesia.org](https://avesia.org/) for details.
 
 ## Dependencies
 
-- **task** (https://taskfile.dev/): task runner.
+- **task** (https://taskfile.dev): task runner.
 
 ```bash
 npm install -g @go-task/cli
 ```
 
-- **rust** (https://rust-lang.org/): rust.
+- **rust** (https://rust-lang.org): rust.
 
 - **wasm-bindgen** (https://github.com/rustwasm/wasm-bindgen): wasm binding generator.
 
