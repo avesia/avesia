@@ -1,13 +1,13 @@
 [workspace]
 members = [
     "avesia",
-    "avesia-desktop",
-    "avesia-render",
-    "avesia-server",
-    "avesia-mmd"
+    "gpu/avesia-render",
+    "backend/avesia-desktop",
+    "backend/avesia-webserver",
+    "avesia-mmd",
 ]
 default-members = [
     "avesia",
-    "avesia-render"
+    "gpu/avesia-render",
 ]
 resolver = "2"
