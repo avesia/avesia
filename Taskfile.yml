@@ -6,7 +6,7 @@ vars:
 
 includes: 
   web:
-    taskfile: ./avesia-web/Taskfile.yml
+    taskfile: ./ui/avesia-web/Taskfile.yml
 
 tasks:
   default:
@@ -33,12 +33,12 @@ tasks:
   build-renderer-release:
     cmds:
       - cargo build -p avesia-render --target=wasm32-unknown-unknown --release
-      - wasm-pack build ./avesia-render --release --out-dir ../avesia-render-wasm
+      - wasm-pack build ./gpu/avesia-render --release --out-dir ../../ui/avesia-render-wasm
   
   build-renderer-debug:
     cmds:
       - cargo build -p avesia-render --target=wasm32-unknown-unknown
-      - wasm-pack build ./avesia-render --dev --out-dir ../avesia-render-wasm
+      - wasm-pack build ./gpu/avesia-render --dev --out-dir ../../ui/avesia-render-wasm
 
   build-app:
     cmds:

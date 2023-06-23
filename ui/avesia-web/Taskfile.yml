@@ -4,13 +4,13 @@ version: '3'
 
 tasks:
   build-web:
-    dir: avesia-web
+    dir: ui/avesia-web
     cmds:
       - npm install
       - npm run build
 
   build-web-dev:
-    dir: avesia-web
+    dir: ui/avesia-web
     cmds:
       - npm install
       - npm run dev

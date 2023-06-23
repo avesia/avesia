@@ -8,7 +8,7 @@ export default defineConfig({
     port: 8513,
   },
   build: {
-    outDir: "../html",
+    outDir: "../../html",
     target: ['esnext', 'edge89', 'firefox89', 'chrome89', 'safari15'],
   },
   plugins: [react(), wasm()],
